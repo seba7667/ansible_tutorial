@@ -1,0 +1,44 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates 
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: web_servers
+  become: true
+  tasks:
+  - name: install apache2 and php package
+    tags: apache,apache2,ubuntu
+    apt: 
+      name: 
+        - apache2
+        - libapache2-mod-php
+      state: latest
+    when: ansible_distribution_version == "20.04" and ansible_distribution == "Ubuntu"
+
+- hosts: db_servers
+  become: true
+  tasks:
+  - name: install db package
+    tags: db, mariadb
+    apt: 
+      name: 
+        - mariadb-server
+      state: latest
+    
+- hosts: file_servers
+  become: true
+  tasks:
+  - name: install fs package
+    tags: FS
+    apt: 
+      name: 
+        - samba
+      state: latest

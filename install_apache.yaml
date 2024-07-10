@@ -4,20 +4,36 @@
   become: true
   tasks:
 
-  - name: update repo index
-    apt:
-      update_cache: yes
-    when: ansible_distribution in ["Debian", "Ubuntu"]
+  # - name: update repo index
+  #   apt:
+  #     update_cache: yes
+  #   when: ansible_distribution in ["Debian", "Ubuntu"]
 
 
-  - name: install apache2 package
-    apt:
-      name: apache2
+# Example using variables
+  # - name: install apache2 and php package
+  #   package: #generic ansible package manager
+  #     name: 
+  #       - "{{ apache_package }}"
+  #       - "{{ php_package }}"
+  #     state: latest
+  #     update_cache: yes
+
+
+
+  - name: install apache2 and php package
+    apt: 
+      name: 
+        - apache2
+        - libapache2-mod-php
       state: latest
+      update_cache: yes
     when: ansible_distribution_version == "20.04" and ansible_distribution == "Ubuntu"
 
-  - name: add php support for apache
-    apt:
-      name: libapache2-mod-php
-      state: latest
-    when: ansible_distribution == "Ubuntu"
+
+
+  # - name: add php support for apache
+  #   apt:
+  #     name: libapache2-mod-php
+  #     state: latest
+  #   when: ansible_distribution == "Ubuntu"

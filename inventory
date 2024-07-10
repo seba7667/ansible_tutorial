@@ -1,3 +1,14 @@
+[web_servers]
 10.1.10.70
+
+[db_servers]
 10.1.10.71
+
+[file_servers]
 10.1.10.72
+
+#example using variables
+#10.1.10.70 apache_package=apache2 php_package=libapache2-mod-php
+#10.1.10.71 apache_package=apache2 php_package=libapache2-mod-php
+#10.1.10.72 apache_package=apache2 php_package=libapache2-mod-php
+#10.1.10.2 apache_package=httpd php_package=php
