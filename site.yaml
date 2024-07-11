@@ -4,12 +4,12 @@
   become: true
   pre_tasks:
 
-  - name: install updates 
-    tags: always
-    apt:
-      upgrade: dist
-      update_cache: yes
-    when: ansible_distribution == "Ubuntu"
+  # - name: install updates 
+  #   tags: always
+  #   apt:
+  #     upgrade: dist
+  #     update_cache: yes
+  #   when: ansible_distribution == "Ubuntu"
 
 - hosts: web_servers
   become: true
@@ -22,6 +22,16 @@
         - libapache2-mod-php
       state: latest
     when: ansible_distribution_version == "20.04" and ansible_distribution == "Ubuntu"
+
+  - name: copy default html file for site
+    tags: apache,apache2,ubuntu
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
 
 - hosts: db_servers
   become: true
@@ -42,3 +52,4 @@
       name: 
         - samba
       state: latest
+
