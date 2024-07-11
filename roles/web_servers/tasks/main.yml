@@ -1,25 +1,37 @@
 ---
+# - name: install apache2 and php package
+#   tags: apache,apache2,ubuntu
+#   apt: 
+#     name: 
+#       - apache2
+#       - libapache2-mod-php
+#     state: latest
+#   when: ansible_distribution_version == "20.04" and ansible_distribution == "Ubuntu"
+
 - name: install apache2 and php package
   tags: apache,apache2,ubuntu
   apt: 
     name: 
-      - apache2
-      - libapache2-mod-php
+      - "{{ apache_package }}"
+      - "{{ php_package }}"
     state: latest
   when: ansible_distribution_version == "20.04" and ansible_distribution == "Ubuntu"
+
 - name: change apache2 file
   tags: apache, apache2, ubuntu
   lineinfile:
     path: /etc/apache2/apache2.conf
     regexp: '^Timeout'
-    line: Timeout 300
-  register: apache
-- name: restart httpd
-  tags: apache, apache2, ubuntu
-  service:
-    name: apache2
-    state: restarted
-  when: apache.changed
+    line: Timeout 400
+#  register: apache
+  notify: restart_apache
+
+# - name: restart httpd
+#   tags: apache, apache2, ubuntu
+#   service:
+#     name: apache2
+#     state: restarted
+#   when: apache.changed
     
 - name: copy default html file for site
   tags: apache,apache2,ubuntu
