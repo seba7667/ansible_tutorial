@@ -4,110 +4,29 @@
   become: true
   pre_tasks:
 
-  # - name: install updates 
-  #   tags: always
-  #   apt:
-  #     upgrade: dist
-  #     update_cache: yes
-  #   when: ansible_distribution == "Ubuntu"
-
-- hosts: file_servers
-  become: true
-  tasks:
-  - name: install unzip
-    package:
-      name: unzip
-
-  # - name: install terraform
-  #   unarchive:
-  #     src: https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
-  #     dest: /usr/local/bin
-  #     remote_src: yes
-  #     mode: 0755
-  #     owner: root
-  #     group: root
+  - name: update repo
+    tags: always
+    apt:
+      #upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
 
 - hosts: all
   become: true
-  tasks:
-  - name: create simone user
-    tags: always
-    user:
-      name: simone
-      groups: root
-
-  - name: add ssh key for simone
-    tags: always
-    authorized_key:
-      user: simone
-      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKaIrXqwWXIE1dDRnufepa0l4tOH+/w9YXiXCtYRmyhq ansible" #copied from the .ssh/
-
-  - name: add sudoers file for simone
-    tags: always
-    copy:
-      src: sudoers_simone
-      dest: /etc/sudoers.d/simone
-      owner: root
-      group: root
-      mode: 0440
+  roles:
+  - base
 
 - hosts: web_servers
   become: true
-  tasks:
-  - name: install apache2 and php package
-    tags: apache,apache2,ubuntu
-    apt: 
-      name: 
-        - apache2
-        - libapache2-mod-php
-      state: latest
-    when: ansible_distribution_version == "20.04" and ansible_distribution == "Ubuntu"
-
-
-
-  - name: change apache2 file
-    tags: apache, apache2, ubuntu
-    lineinfile:
-      path: /etc/apache2/apache2.conf
-      regexp: '^Timeout'
-      line: Timeout 300
-    register: apache
-
-  - name: restart httpd
-    tags: apache, apache2, ubuntu
-    service:
-      name: apache2
-      state: restarted
-    when: apache.changed
-      
-
-  - name: copy default html file for site
-    tags: apache,apache2,ubuntu
-    copy:
-      src: default_site.html
-      dest: /var/www/html/index.html
-      owner: root
-      group: root
-      mode: 0644
-
+  roles:
+  - web_servers
 
 - hosts: db_servers
   become: true
-  tasks:
-  - name: install db package
-    tags: db, mariadb
-    apt: 
-      name: 
-        - mariadb-server
-      state: latest
-    
+  roles:
+    - db_servers
+
 - hosts: file_servers
   become: true
-  tasks:
-  - name: install fs package
-    tags: FS
-    apt: 
-      name: 
-        - samba
-      state: latest
-
+  roles:
+  - file_servers

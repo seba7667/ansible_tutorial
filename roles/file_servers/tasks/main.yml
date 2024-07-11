@@ -1,0 +1,7 @@
+---
+- name: install fs package
+  tags: FS
+  apt: 
+    name: 
+      - samba
+    state: latest
